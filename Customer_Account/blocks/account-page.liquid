@@ -1,0 +1,23 @@
+{%- if customer -%}
+   <div id="customer-app"></div> 
+{%- endif -%}
+
+
+{% schema %}
+{
+    "name":"Account Page",
+    "target":"section",
+    "tag":"section",
+    "templates":["customers/account"],
+    "stylesheet":"app.css",
+    "javascript":"app.js",
+    "settings":[
+       {
+           "type": "text",
+           "id": "id",
+           "label": "label",
+           "placeholder": "Enter Your Name"
+       }
+    ]
+}
+{% endschema %}

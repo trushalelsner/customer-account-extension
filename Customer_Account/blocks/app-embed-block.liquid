@@ -1,0 +1,23 @@
+<script>
+	const config = {
+		base_color : "{{block.settings.color}}",
+	};
+</script>
+
+{% schema %}
+{
+	"name":"Customer App Embed",
+	"target":"body",
+	"templates":["customers/account"],
+	"settings":[
+		
+		{ 
+			"label": "Color", 
+			"id": "color", 
+			"type": "color", 
+			"default": "#000000"
+		}
+		
+	]
+}
+{% endschema %}
