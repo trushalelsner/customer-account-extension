@@ -13,14 +13,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^10.4.2",
-    "laravel-mix": "^6.0.43",
-    "postcss": "^8.4.8",
-    "tailwindcss": "^3.0.23"
+    "laravel-mix": "^6.0.43"
   },
   "dependencies": {
     "@vue/compiler-sfc": "^3.2.31",
     "vue": "^3.2.31",
-    "vue-loader": "^17.0.0"
+    "vue-loader": "^17.0.0",
+    "vue-router": "^4.0.14"
   }
 }

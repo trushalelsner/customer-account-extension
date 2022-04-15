@@ -1,5 +1,12 @@
 {%- if customer -%}
-   <div id="customer-app"></div> 
+    <section class="customer-app__wrapper" id="el-customer__app">
+        <script>
+            const customerData={
+                bg_image:"{{ block.settings.bg_image | img_url:'master'}}"
+            }
+        </script>
+        <div id="customer-app"></div> 
+    </section>
 {%- endif -%}
 
 
@@ -12,12 +19,12 @@
     "stylesheet":"app.css",
     "javascript":"app.js",
     "settings":[
-       {
-           "type": "text",
-           "id": "id",
-           "label": "label",
-           "placeholder": "Enter Your Name"
-       }
+      {
+        "type": "image_picker",
+        "id": "bg_image",
+        "label": "Back-Ground Image",
+        "info":"Recommended Banner Size is 1900 * 1400px"
+      }
     ]
 }
 {% endschema %}

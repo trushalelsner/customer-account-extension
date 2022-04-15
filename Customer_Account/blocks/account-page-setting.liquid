@@ -1,0 +1,43 @@
+<script>
+	const app_config = {
+		layout : "{{ block.settings.layout }}",
+		base_color : "{{block.settings.color}}"
+	};
+</script>
+
+{% schema %}
+{
+	"name":"Customer App Embed",
+	"target":"body",
+	"templates":["customers/account"],
+	"settings":[
+		{
+			"type": "select",
+			"id": "layout",
+			"label": "Account Layout",
+			"options": [
+				{
+					"value": "Layout1",
+					"label": "Layout-1"
+				},
+				{
+					"value": "Layout2",
+					"label": "Layout-2"
+				},
+				{
+					"value": "Layout3",
+					"label": "Layout-3"
+				}
+			]
+		},
+		
+		{ 
+			"label": "Color", 
+			"id": "color", 
+			"type": "color", 
+			"default": "#000000"
+		}
+		
+	]
+}
+{% endschema %}
