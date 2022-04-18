@@ -25,9 +25,11 @@ const routes = [
         component:Orders
     },
     {
-        path:"/account/orders/{:id}",
+        path:"/account/orders/:orderId",
         name:"Order",
-        component:Order
+        component:Order,
+        props:true
+
     },
     {
         path:"/account/subscription",

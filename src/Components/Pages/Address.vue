@@ -97,7 +97,7 @@
             <button class="editBtn" @click="editAddress(address)">
               <span>Edit</span>
             </button>
-            <button class="delBtn" @click="deleteAdress(address.id)">
+            <button class="delBtn" @click="deleteAddress(address.id)">
               <span>Delete</span>
             </button>
           </div>
@@ -110,13 +110,11 @@
           <p v-if="address.zip != null">{{ address.zip }}</p>
           <p v-if="address.country != null">{{ address.country }}</p>
           <p v-if="address.provience != null">{{ address.provience }}</p>
-
         </div>
         <div class="box-footer">
           <div class="switch-box"><p>Switch to default</p><span>switch</span></div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -168,14 +166,14 @@ export default {
       getAddresses();
     }
 
-    const updateAddress = async(id)=>{
+    const updateAddress = async()=>{
 
       const req = await fetch(`https://elsnerapps.apps.elsner.com/CustomerAccount/App/api/updateAddress?shop=${Shopify.shop}&c_id=${__st.cid}`,{ 
         method:'POST',
         headers: {
           'content-type': 'application/json'
         },
-        body:JSON.stringify({form,address_id})
+        body:JSON.stringify({form,address_id:address_id.value})
         }
       );
       const json = await req.json();
@@ -184,11 +182,11 @@ export default {
     }
 
     const deleteAddress = async(id)=>{
-      const req = await fetch(`https://elsnerapps.apps.elsner.com/CustomerAccount/App/api/deleteAddress?shop=${Shopify.shop}&c_id=${__st.cid}`,{method:'POST',body:JSON.stringify({form,address_id})});
+      console.log(id);
+      const req = await fetch(`https://elsnerapps.apps.elsner.com/CustomerAccount/App/api/deleteAddress?shop=${Shopify.shop}&c_id=${__st.cid}&address_id=${id}`,{method:'POST',body:JSON.stringify({address_id:id})});
       const json = await req.json();
-      resetform();
       getAddresses();
-    }
+    } 
 
     const editAddress = (address) =>{
       address_id.value=address.id;
