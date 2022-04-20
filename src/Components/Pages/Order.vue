@@ -7,13 +7,16 @@
       </div>
       <div class="cta-action">
         <!-- when order is not delivered -->
-        <button>Cancle</button>
+        <button v-if="order?.displayFulfillmentStatus != 'FULFILLED'" class="btn" id="cancle" @click="cancleModal = !cancleModal">Cancle</button>
+        
+        <cancle-order v-show="cancleModal" :orderId="orderId" ></cancle-order>
+
         <!-- after delivering    -->
-        <button>Return</button>
+        <button class="btn" id="return" v-if="order?.displayFulfillmentStatus != 'FULFILLED'" @click="returnModal = !returnModal">Return</button>
         <!-- after delivering -->
-        <button>Refund</button>
+        <button class="refund" id="refund">Refund</button>
         <!-- after delivering an order -->
-        <button>Download Invoice</button>
+        <button class="download" id="download">Download Invoice</button>
       </div>
     </div>
     <div class="page-content">
@@ -85,6 +88,7 @@
             <div v-if="order?.billingAddress.length != 0" class="billing--address__wrapper">
               <p v-if="order?.billingAddress.address1 != null">{{ order?.billingAddress.address1 }}</p>
               <p v-if=" order?.billingAddress.address2 != null">{{ order?.billingAddress.address2 }}</p>
+
               <p v-if="order?.billingAddress.company != null">{{ order?.billingAddress.company }}</p>
               <p v-if="order?.billingAddress.city != null">{{ order?.billingAddress.city }} </p>
               <p v-if="order?.billingAddress.zip != null">{{ order?.billingAddress.zip }} </p>
@@ -101,9 +105,14 @@
 <script>
 import { onMounted,ref } from '@vue/runtime-core';
 import { useRoute } from 'vue-router';
+import CancleOrder from '../Partials/CancleOrder.vue'
 export default {
   name:"Order",
+  components:{
+    CancleOrder
+  },
   setup: () => {
+    const cancleModal = ref(false);
     const route = useRoute();
     const orderId = ref(route.params.orderId);
     const order = ref(null);
@@ -117,10 +126,15 @@ export default {
       const json = await getReq.json();
       console.log(json);
       order.value = json.data.order;
-      console.log(order.value);
-
     }
+
+    const cancle = async() =>{
+      const cancleReq = await fetch(`https://elsnerapps.apps.elsner.com/CustomerAccount/App/api/customer/${__st.cid}/orders/${orderId.value}/cancle?shop=${Shopify.shop}`);
+      const josn = await cancleReq.json();
+      console.log(json);
+    } 
     return {
+      cancleModal,
       route,
       order,
       orderId

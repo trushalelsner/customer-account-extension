@@ -27,7 +27,7 @@ const routes = [
     {
         path:"/account/orders/:orderId",
         name:"Order",
-        component:Order,
+        component:() => import("./Components/Pages/Order.vue"),
         props:true
 
     },
