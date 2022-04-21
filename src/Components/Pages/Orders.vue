@@ -4,6 +4,9 @@
       <h3>Order History</h3>
       <p>Check the status of Recent Orders , manage returns , and download the invoices.</p>
     </div>
+    <!-- Return Modal  -->
+   
+
     <div class="orders-box__wrapper">
       <div class="order_box" v-for="(order,index) in orders.orders" :key="index">
         <div class="box_wrapper">
@@ -14,9 +17,14 @@
               <div class="info"><p>Total Amount</p><span>{{ order.node.totalPriceSet.shopMoney.amount }}</span></div>
             </div>
             <div class="order-actions">
-              <button class="btn" @click="returnorder(order.node.id)">Return</button>
+              <!-- <button class="btn" v-if="order.node.displayFulfillmentStatus == 'FULFILLED'" @click.prevent="$emit('toggleReturn',order.node.id)">Return</button> -->
+              <button class="btn" v-if="order.node.displayFulfillmentStatus == 'FULFILLED'"  >Return</button>
+             <!--  <button class="btn" v-if="order.node.displayFulfillmentStatus == 'FULFILLED'" @click.prevent="toggleReturn(order.node.id)">Return</button> -->
+              <!-- return modal -->
+              <ReturnOrder  v-if="order.node.displayFulfillmentStatus == 'FULFILLED'" v-show="showReturn" :orderId=" order.node.id.split('/')[4]"/>
               <button class="btn" @click="download(order.node.id)">Download Invoice</button>
-              <button class="btn">View Order</button>
+
+               <router-link :to="{ name:'Order' , params:{orderId:order.node.id.split('/')[4] } }" class="btn">View Order</router-link>
             </div>
           </div>
           <div class="order-content">
@@ -40,7 +48,7 @@
                 </div>
               </div>
               <div v-if="order.node.lineItems.edges.length <= 3">
-                <router-link :to="{ name:'Order' , params:{orderId:order.node.id.split('/')[4] } }">(+{{ order.node.lineItems.edges.length }}) items</router-link>
+                <router-link :to="{ name:'Order' , params:{orderId:order.node.id.split('/')[4] } }" class="link">(+{{ order.node.lineItems.edges.length }}) items</router-link>
               </div>
             </div>
           </div>
@@ -51,13 +59,19 @@
 </template>
 
 <script>
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
+import ReturnOrder from '../Partials/ReturnOrder.vue';
 export default {
   name:"Orders",
-  setup:()=>{
+  components:{
+    ReturnOrder
+  },
+  setup:(context)=>{
     const orders = reactive({"orders":{}});
-
+    const showReturn = ref(false);
     onMounted(()=>{getOrders()});
+
+    
 
     const getOrders = async() =>{
       let fetchOrders = await fetch(`https://elsnerapps.apps.elsner.com/CustomerAccount/App/api/customer/${__st.cid}/orders?shop=${Shopify.shop}`);
@@ -65,7 +79,8 @@ export default {
       orders.orders = json.data.customer.orders.edges;
     }
     return {
-      orders
+      orders,
+      showReturn
     }
   }
 }
