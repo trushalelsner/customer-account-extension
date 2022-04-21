@@ -1,5 +1,5 @@
 <template>
-  <div>
+	<div>
 		<!-- cancle modal -->
 		<div class="cancle-modal__wrapper">
 			<div class="modal--content">
@@ -39,7 +39,7 @@
 <script>
 import { onMounted, reactive, ref } from '@vue/runtime-core'
 export default {
-  name:"Cancle",
+	name:"Cancle",
 	props:{
 		orderId:String
 	},
@@ -61,7 +61,7 @@ export default {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
-    		},
+				},
 				method:'POST',
 				body:JSON.stringify(process)
 			});
