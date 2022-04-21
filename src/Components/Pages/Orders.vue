@@ -18,10 +18,11 @@
             </div>
             <div class="order-actions">
               <!-- <button class="btn" v-if="order.node.displayFulfillmentStatus == 'FULFILLED'" @click.prevent="$emit('toggleReturn',order.node.id)">Return</button> -->
-              <button class="btn" v-if="order.node.displayFulfillmentStatus == 'FULFILLED'"  >Return</button>
+              <button class="btn" v-if="order.node.displayFulfillmentStatus == 'FULFILLED'">Return</button>
              <!--  <button class="btn" v-if="order.node.displayFulfillmentStatus == 'FULFILLED'" @click.prevent="toggleReturn(order.node.id)">Return</button> -->
               <!-- return modal -->
-              <ReturnOrder  v-if="order.node.displayFulfillmentStatus == 'FULFILLED'" v-show="showReturn" :orderId=" order.node.id.split('/')[4]"/>
+              <!-- <ReturnOrder :showReturn="showReturn" :lineItems="lineItems" /> -->
+              <ReturnOrder v-if="order.node.displayFulfillmentStatus == 'FULFILLED'" :orderId="order.node.id.split('/')[4]" />
               <button class="btn" @click="download(order.node.id)">Download Invoice</button>
 
                <router-link :to="{ name:'Order' , params:{orderId:order.node.id.split('/')[4] } }" class="btn">View Order</router-link>
@@ -59,28 +60,36 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive } from 'vue';
 import ReturnOrder from '../Partials/ReturnOrder.vue';
 export default {
   name:"Orders",
   components:{
     ReturnOrder
   },
-  setup:(context)=>{
+  setup:()=>{
     const orders = reactive({"orders":{}});
-    const showReturn = ref(false);
-    onMounted(()=>{getOrders()});
+    const showReturn = false;
+    const lineItems = {'lineitems':{}};
 
-    
+    onMounted(()=>{getOrders()});
 
     const getOrders = async() =>{
       let fetchOrders = await fetch(`https://elsnerapps.apps.elsner.com/CustomerAccount/App/api/customer/${__st.cid}/orders?shop=${Shopify.shop}`);
       let json = await fetchOrders.json();
       orders.orders = json.data.customer.orders.edges;
     }
+
+    /* const fetchProduct = async(id)=>{
+      const fetchOrder = await fetch(`https://elsnerapps.apps.elsner.com/CustomerAccount/App/api/customer/${__st.cid}/orders/${id}?shop=${Shopify.shop}`);
+      const json = await fetchOrder.json();
+      lineItems.lineitems = json.data.order.lineItems.edges;
+    } */
+
     return {
       orders,
-      showReturn
+      showReturn,
+      lineItems,
     }
   }
 }

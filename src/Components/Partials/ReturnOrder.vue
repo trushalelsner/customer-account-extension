@@ -1,5 +1,5 @@
 <template>
-  <div class="return--order__wrapper" id="return-order">
+  <div class="return--order__wrapper" id="return-order" >
     <div class="return-container">
       <div class="modal--content">
         <div class="modal-header">
@@ -35,11 +35,11 @@
           </div>
           <!-- attachments -->
           <p>Please add attachments as a proof</p>
-          <input type="file" name="proof" />
+          <input type="file" name="proof" class="proof-file" accept="image/*"/>
         </div>
         <div class="modal-footer">
           <button class="btn" id="returncancle">Cancle</button>
-          <button class="btn" id="retunbtn" >Return</button>
+          <button class="btn" id="retunbtn" @click="returnSubmit">Return</button>
         </div>
       </div>
     </div>
@@ -47,12 +47,55 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref } from '@vue/runtime-core';
+import { reactive , onMounted } from 'vue';
 export default {
   name:"ReturnOrder",
   props:{
     orderId:String
   },
+
+ /*  methods:{
+    addItem(id) {
+      let returnQty= parseInt(document.querySelector(`.item input[data-input='${id}']`).value);
+      returnQty++;
+      document.querySelector(`.item input[data-input='${id}']`).value = returnQty; 
+      if (returnQty > 0) {
+        document.querySelector(`.reason-box textarea[data-reason='${id}']`).style.display = 'block';
+      }
+    },
+
+    removeItem(id){
+      let returnQty= parseInt(document.querySelector(`.item input[data-input='${id}']`).value);
+      returnQty--
+      document.querySelector(`.item input[data-input='${id}']`).value = returnQty; 
+      if (returnQty === 0) {
+        document.querySelector(`.reason-box textarea[data-reason='${id}']`).style.display = 'none';
+      }
+    },
+
+    returnSubmit(){
+      let targets = document.querySelectorAll('.modal-body .lineitem');
+
+      targets.forEach(target =>{
+        let id = target.getAttribute('data-id');
+        let returnQty = parseInt(target.querySelector("input[type='number']").value);
+        if (returnQty > 0) {
+          let returnMsg = target.querySelector(".reason-box textarea[name='reason']").value;
+
+        }
+      });
+    }
+
+  },
+
+  mounted(){
+    debugger;
+    console.log('orderId'+this.orderId, 'lineItems'+this.lineitems, 'showreturns'+this.showReturn);
+  },
+  beforeUpdate(){
+    console.log('orderId'+this.orderId, 'lineItems'+this.lineitems, 'showreturns'+this.showReturn);
+  } */
+
   setup:(props) => {
     const itemsList =[];
     const lineItems = reactive({'lineitems':{}});
@@ -69,35 +112,61 @@ export default {
     const addItem = (id) =>{
       let returnQty= parseInt(document.querySelector(`.item input[data-input='${id}']`).value);
       returnQty++;
+      document.querySelector(`.item input[data-input='${id}']`).value = returnQty; 
       if (returnQty > 0) {
         document.querySelector(`.reason-box textarea[data-reason='${id}']`).style.display = 'block';
       }
     }
 
     const removeItem = (id) =>{
-      debugger;
       let returnQty= parseInt(document.querySelector(`.item input[data-input='${id}']`).value);
       returnQty--
+      document.querySelector(`.item input[data-input='${id}']`).value = returnQty; 
       if (returnQty === 0) {
         document.querySelector(`.reason-box textarea[data-reason='${id}']`).style.display = 'none';
       }
     }
 
-    const returnSubmit = () =>{
+    const returnSubmit = async() =>{
       let targets = document.querySelectorAll('.modal-body .lineitem');
-
       targets.forEach(target =>{
         let id = target.getAttribute('data-id');
         let returnQty = parseInt(target.querySelector("input[type='number']").value);
         if (returnQty > 0) {
           let returnMsg = target.querySelector(".reason-box textarea[name='reason']").value;
-
+          /* find the value is exist or not */
+          var index = itemsList.findIndex(item => item.lineItemId==id);
+          if(index === -1){
+            itemsList.push({'lineItemId':id,'returnQty':returnQty,'message':returnMsg});
+          } else {
+            itemsList[index].lineItemId = id;
+            itemsList[index].returnQty = returnQty;
+            itemsList[index].message = returnMsg;
+          }
         }
+        /* target files */
       });
 
+      if (targets.length > 0) {
+        let file = document.querySelector(".modal-body input[type='file']");
+        console.log(itemsList);
+        let data = new FormData();
+        data.append('itemsList',JSON.stringify(itemsList));
+        data.append('file', file.files[0], file.files[0].name);
+        console.log(data);
+        debugger;
+        const submitReturnreq = await fetch(`https://elsnerapps.apps.elsner.com/CustomerAccount/App/api/customer/${__st.cid}/orders/${props.orderId}/return?shop=${Shopify.shop}`,{
+          method:"POST",
+          headers: {
+            'Accept':'application/json',
+          },
+          body:data
+        });
+        const json = await submitReturnreq.json();
+        
+        console.log(json);
+      }
     }
-
-    
 
     onMounted(()=>{
       getOrderDetails();
@@ -107,9 +176,10 @@ export default {
       lineItems,
       addItem,
       removeItem,
-      itemsList
+      itemsList,
+      returnSubmit
     }
-  }
+  } 
 }
 </script>
 
